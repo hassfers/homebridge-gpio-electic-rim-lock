@@ -110,11 +110,13 @@ ElecticRimLockAccessory.prototype = {
 
 	setLocked: function() {
 		this.log("lock ") + this.name;
+		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
 		this.writePin(0);
 	},
 
 	setUnLocked: function() {
 		this.log("unlock ") + this.name;
+		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 0)
 		this.writePin(1);
 	},
 
