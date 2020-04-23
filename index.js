@@ -116,7 +116,7 @@ ElecticRimLockAccessory.prototype = {
 	autoLockFunction: function () {
 		this.log('Waiting %s seconds for autolock', this.duration)
 		setTimeout(() => {
-		  this.service.setCharacteristic(Characteristic.LockTargetState, 1)
+		  this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
 		  this.log('Autolocking...')
 		}, this.autoLockDelay * 1000)
 	  },
