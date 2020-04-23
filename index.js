@@ -16,13 +16,15 @@ function getSerial(){
 	return serial[1].slice(9);
 }
 
+
 function ElecticRimLockAccessory(log, config) {
 	this.log = log;
 	this.name = config['name'];
 	this.pin = config['pin'];
 	this.duration = config['duration'];
 	this.version = require('./package.json').version;
-	this.lastLockTargetState = 1;
+	this.currentLockState = 1;
+	this.targetLockState = 1;
 
 	if (!this.pin) throw new Error("You must provide a config value for pin.");
 	if (this.duration == null || this.duration % 1 != 0) this.duration = 1000;
@@ -36,7 +38,7 @@ ElecticRimLockAccessory.prototype = {
 	getServices: function() {	
 		let informationService = new Service.AccessoryInformation();
 		informationService
-    			.setCharacteristic(Characteristic.Manufacturer, "Roberto Montanari")
+    		.setCharacteristic(Characteristic.Manufacturer, "Roberto Montanari")
 			.setCharacteristic(Characteristic.Model, "Tiro GPIO")
 			.setCharacteristic(Characteristic.SerialNumber, getSerial() + this.pin)
 			.setCharacteristic(Characteristic.FirmwareRevision, this.version);
@@ -57,35 +59,69 @@ ElecticRimLockAccessory.prototype = {
 	},
 
 	getLockCurrentState: function(callback) {
-		if (this.lastLockTargetState == 0) {
-			this.lastLockTargetState = 1;
-			callback(null, 0);
-		} else {
-			callback(null, 1);
-		}
+		callback(null, this.currentLockState);
 	},
 
 	getLockTargetState: function(callback) {
-		this.lastLockTargetState = 1;
-		callback(null, 1);
+		callback(null, this.targetLockState);
 	},
 
+	
 	setLockTargetState: function(state, callback) {
-		if (state == 0) {
-			this.writePin(1);
-			this.log("Wait for " + this.duration + " ms");
-			var self = this;
-			setTimeout(function(){self.writePin(0)}, this.duration);
-			this.log("Set state to open");
-			this.lastLockTargetState = 0;
-			callback(null);
-		} else {
-			this.writePin(0);
-			this.log("Set state to closed");
-			this.lastLockTargetState = 1;
-			callback(null);
-		}						
+		if ( state == this.currentLockState) {
+			callback(null)
+			return
+		}
+		switch (state) {
+			case 0:
+				this.setLocked();
+				if (this.duration){
+					this.autoLockFunction();
+				}
+			case 1:
+				this.setUnLocked();
+			default:
+				return
+		}
+		// if (state == 0) {
+		// 	this.writePin(1);
+		// 	this.log("Wait for " + this.duration + " ms");
+		// 	var self = this;
+		// 	setTimeout(function(){self.writePin(0)}, this.duration);
+		// 	this.log("Set state to open");
+		// 	this.lastLockTargetState = 0;
+		// 	callback(null);
+		// } else {
+		// 	this.writePin(0);
+		// 	this.log("Set state to closed");
+		// 	this.lastLockTargetState = 1;
+		// 	callback(null);
+		// }	
+		
+		// if (state == )
+
+
 	},
+
+	setLocked: function(callback) {
+		this.log("lock ") + this.name;
+		this.writePin(0);
+		callback(null);
+	},
+
+	setUnLocked: function(callback) {
+		this.log("unlock ") + this.name;
+		this.writePin(1);
+		callback(null);
+	},
+
+	autoLockFunction: function () {
+		this.log('Waiting %s seconds for autolock', this.duration)
+		setTimeout(() => {
+		  this.service.setCharacteristic(Characteristic.LockTargetState, 1)
+		  this.log('Autolocking...')
+		}, this.autoLockDelay * 1000)
+	  },
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
