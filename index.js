@@ -55,6 +55,8 @@ ElecticRimLockAccessory.prototype = {
 		this.informationService = informationService;
 		this.lockMechanismService = lockMechanismService;
 
+		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
+
 		return [informationService, lockMechanismService];
 	},
 
@@ -72,9 +74,8 @@ ElecticRimLockAccessory.prototype = {
 	setLockTargetState: function(state, callback) {
 		this.log("getLockTargetState" + this.currentLockState + state);
 		if ( state == this.currentLockState) {
-			callback(null)
 			this.log("early return")
-			break
+			return("was da los")
 		}
 		switch (state) {
 			case 0:
