@@ -123,7 +123,6 @@ ElecticRimLockAccessory.prototype = {
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
-		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, val)
 		rpio.open(this.pin, rpio.OUTPUT);
 		rpio.write(this.pin, val);
 	}
