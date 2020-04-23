@@ -21,13 +21,13 @@ function ElecticRimLockAccessory(log, config) {
 	this.log = log;
 	this.name = config['name'];
 	this.pin = config['pin'];
-	this.duration = config['duration'];
+	// this.duration = config['duration'];
 	this.version = require('./package.json').version;
 	this.currentLockState = 1;
 	this.targetLockState = 1;
 
 	if (!this.pin) throw new Error("You must provide a config value for pin.");
-	if (this.duration == null || this.duration % 1 != 0) this.duration = 1000;
+	if (this.duration == null || this.duration % 1 != 0) this.duration = 3000;
 	this.log("Tiro GPIO version: " + this.version);
 	this.log("Switch pin: " + this.pin);
 	this.log("Active time: " + this.duration + " ms");
@@ -59,12 +59,12 @@ ElecticRimLockAccessory.prototype = {
 	},
 
 	getLockCurrentState: function(callback) {
-		this.log("getLockCurrentState" + this.currentLockState);
+		this.log("getLockCurrentState " + this.currentLockState);
 		callback(null, this.currentLockState);
 	},
 
 	getLockTargetState: function(callback) {
-		this.log("getLockTargetState" + this.targetLockState);
+		this.log("getLockTargetState " + this.targetLockState);
 		callback(null, this.targetLockState);
 	},
 
