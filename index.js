@@ -118,11 +118,12 @@ ElecticRimLockAccessory.prototype = {
 		setTimeout(() => {
 		  this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
 		  this.log('Autolocking...')
-		}, this.autoLockDelay * 1000)
+		}, this.duration)
 	  },
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
+		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, val)
 		rpio.open(this.pin, rpio.OUTPUT);
 		rpio.write(this.pin, val);
 	}
