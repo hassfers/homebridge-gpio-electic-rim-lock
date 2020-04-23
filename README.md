@@ -7,11 +7,17 @@ This plugin assumes that you are using a Raspberry Pi to directly control your e
 
 ![Schematic](https://github.com/roberto-montanari/homebridge-gpio-electic-rim-lock/blob/master/images/schematic.png?raw=true)
 
+
+## First of all 
+```
+pip install RPIO
+
+
 ## Installation
 
 Install this plugin using: 
 ```
-sudo npm install -g homebridge-gpio-electic-rim-lock --unsafe-perm
+npm install homebridge-gpio-electic-rim-lock
 ```
 
 
