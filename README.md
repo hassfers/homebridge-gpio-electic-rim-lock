@@ -11,6 +11,8 @@ This plugin assumes that you are using a Raspberry Pi to directly control your e
 ## First of all 
 ```
 pip install RPIO
+
+npm i rpio
 ```
 
 ## Installation
