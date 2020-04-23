@@ -73,7 +73,8 @@ ElecticRimLockAccessory.prototype = {
 		this.log("getLockTargetState" + this.currentLockState + state);
 		if ( state == this.currentLockState) {
 			callback(null)
-			return
+			this.log("early return")
+			break
 		}
 		switch (state) {
 			case 0:
