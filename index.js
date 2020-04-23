@@ -77,15 +77,21 @@ ElecticRimLockAccessory.prototype = {
 		}
 		switch (state) {
 			case 0:
+				this.log("state 0")
 				this.setLocked();
 				if (this.duration){
 					this.autoLockFunction();
 				}
 				this.currentLockState = state;
+				callback(null);
 			case 1:
+				this.log("state 1")
 				this.setUnLocked();
 				this.currentLockState = state;
+				callback(null)
 			default:
+				this.log("default")
+				callback(null);
 				return
 		}
 		// if (state == 0) {
