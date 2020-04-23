@@ -103,16 +103,14 @@ ElecticRimLockAccessory.prototype = {
 
 	},
 
-	setLocked: function(callback) {
+	setLocked: function() {
 		this.log("lock ") + this.name;
 		this.writePin(0);
-		callback(null);
 	},
 
-	setUnLocked: function(callback) {
+	setUnLocked: function() {
 		this.log("unlock ") + this.name;
 		this.writePin(1);
-		callback(null);
 	},
 
 	autoLockFunction: function () {
