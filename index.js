@@ -59,15 +59,18 @@ ElecticRimLockAccessory.prototype = {
 	},
 
 	getLockCurrentState: function(callback) {
+		this.log("getLockCurrentState" + this.currentLockState + callback);
 		callback(null, this.currentLockState);
 	},
 
 	getLockTargetState: function(callback) {
+		this.log("getLockTargetState" + this.targetLockState + callback);
 		callback(null, this.targetLockState);
 	},
 
 	
 	setLockTargetState: function(state, callback) {
+		this.log("getLockTargetState" + this.currentLockState + state + callback);
 		if ( state == this.currentLockState) {
 			callback(null)
 			return
@@ -78,8 +81,10 @@ ElecticRimLockAccessory.prototype = {
 				if (this.duration){
 					this.autoLockFunction();
 				}
+				this.currentLockState = state;
 			case 1:
 				this.setUnLocked();
+				this.currentLockState = state;
 			default:
 				return
 		}
