@@ -63,13 +63,9 @@ function ElecticRimLockAccessory(log, config) {
     				.on('get', this.getLockTargetState.bind(this))
     				.on('set', this.setLockTargetState.bind(this));
 
-	lockMechanismService
-			updateCharacteristic(Characteristic.LockCurrentState, 
-			Characteristic.LockTargetState.SECURED);
+	lockMechanismService.updateCharacteristic(Characteristic.LockCurrentState, Characteristic.LockTargetState.SECURED);
 
-	lockMechanismService.
-			updateCharacteristic(Characteristic.LockTargetState, 
-			Characteristic.LockTargetState.SECURED);
+	lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
 }
 
 ElecticRimLockAccessory.prototype = {
