@@ -37,7 +37,7 @@ function GPIOLockAccessory(log, config) {
 
 	if (!this.pin) throw new Error("You must provide a config value for pin.");
 	if (this.autoLock && this.autoLockDelay % 1 == 0) {
-		this.log("autolooking enabled after %s",this.autoLockDelay);
+		this.log("autolooking enabled after %s milliseconds",this.autoLockDelay);
 	} 
 	this.log("Tiro GPIO version: " + this.version);
 	this.log("Switch pin: " + this.pin);
@@ -90,14 +90,15 @@ GPIOLockAccessory.prototype = {
 				this.log("set to Characteristic.LockTargetState.SECURED");
 				this.setLocked();
 				this.targetLockState = state;
-				// if (this.autoLock){
-				// 	this.autoLockFunction();
-				// }
 				break;
 			case Characteristic.LockCurrentState.UNSECURED:
 				this.log("set to Characteristic.LockTargetState.UNSECURED");
 				this.setUnLocked();
 				this.targetLockState = state;
+				if (this.autoLock){
+					this.log('Waiting %s milliseconds for autolock', this.autoLockDelay);
+					this.autoLockFunction()
+				}
 				break;
 			default:
 				this.log("default")
@@ -120,11 +121,11 @@ GPIOLockAccessory.prototype = {
 	},
 
 	autoLockFunction: function () {
-		this.log('Waiting %s milliseconds for autolock', this.autoLockDelay)
-		setTimeout(function() {
-		// this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED)
-		this.setLocked();
-		  this.log('Autolocking...')
+		this.log('Waiting %s seconds for autolock', this.autoLockDelay)
+		setTimeout(() => {
+			this.log('Autolocking...');
+			this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
+			this.setLocked();
 		}, this.autoLockDelay)
 	  },
 
