@@ -28,8 +28,8 @@ function ElecticRimLockAccessory(log, config) {
 	this.pin = config['pin'];
 
 	//Autolock 
-	this.autoLock = config.autoLock || false
-	this.autoLockDelay = config.autoLockDelay || 10
+	// this.autoLock = config.autoLock || false
+	// this.autoLockDelay = config.autoLockDelay || 10
 
 	//lockstate Variables
 	this.currentLockState = Characteristic.LockCurrentState.SECURED;
@@ -132,15 +132,13 @@ ElecticRimLockAccessory.prototype = {
 
 	setLocked: function() {
 		this.log("lock ") + this.name;
-		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, 
-		Characteristic.LockTargetState.SECURED);
+		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
 		this.writePin(0);
 	},
 
 	setUnLocked: function() {
 		this.log("unlock ") + this.name;
-		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, 
-			Characteristic.LockTargetState.UNSECURED);
+		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.UNSECURED);
 		this.writePin(1);
 	},
 
@@ -155,8 +153,8 @@ ElecticRimLockAccessory.prototype = {
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
-		this.lockMechanismService.updateCharacteristic(Characteristic.currentLockState, 
-			val == Characteristic.LockTargetState.SECURED ? 
+		this.lockMechanismService.updateCharacteristic(Characteristic.currentLockState,
+			val == Characteristic.LockTargetState.SECURED ?
 			Characteristic.LockTargetState.SECURED : Characteristic.LockTargetState.UNSECURED);
 		// rpio.open(this.pin, rpio.OUTPUT);
 		// rpio.write(this.pin, val);
