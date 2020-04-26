@@ -87,16 +87,15 @@ GPIOLockAccessory.prototype = {
 	setLockTargetState: function(state, callback) {
 		switch (state) {
 			case Characteristic.LockTargetState.SECURED:
-				this.log("set to Characteristic.LockTargetState.SECURED");
+				this.log("set Characteristic.LockTargetState.SECURED");
 				this.setLocked();
 				this.targetLockState = state;
 				break;
 			case Characteristic.LockCurrentState.UNSECURED:
-				this.log("set to Characteristic.LockTargetState.UNSECURED");
+				this.log("set Characteristic.LockTargetState.UNSECURED");
 				this.setUnLocked();
 				this.targetLockState = state;
-				if (this.autoLock){
-					this.log('Waiting %s milliseconds for autolock', this.autoLockDelay);
+				if (this.autoLock) {
 					this.autoLockFunction()
 				}
 				break;
@@ -107,14 +106,14 @@ GPIOLockAccessory.prototype = {
 	},
 
 	setLocked: function() {
-		this.log("lock ") + this.name;
+		this.log("locking... ") 
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
 		this.currentLockState = Characteristic.LockTargetState.SECURED;
 		this.writePin(0);
 	},
 
 	setUnLocked: function() {
-		this.log("unlock ") + this.name;
+		this.log("unlocking... ")
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.UNSECURED);
 		this.currentLockState = Characteristic.LockTargetState.UNSECURED;
 		this.writePin(1);
@@ -131,10 +130,11 @@ GPIOLockAccessory.prototype = {
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
+		rpio.open(this.pin, rpio.OUTPUT);
+		rpio.write(this.pin, val);
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockCurrentState,
 			val == 0 ?
 			Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED);
-		rpio.open(this.pin, rpio.OUTPUT);
-		rpio.write(this.pin, val);
+		this.log(val == 0 ? "locked" : "unlocked") ;
 	}
 }
