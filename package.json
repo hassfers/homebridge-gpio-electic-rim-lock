@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-gpio-electic-rim-lock",
+  "name": "homebridge-gpio-lock",
   "version": "1.0.4",
   "description": "Homebridge plugin to open electric rim locks via Raspberry Pi GPIO pins",
   "main": "index.js",
@@ -13,7 +13,7 @@
   "keywords": [
     "homebridge-plugin",
     "electic rim lock",
-    "tiro"
+    "STH"
   ],
   "author": "Roberto Montanari",
   "license": "MIT",

@@ -7,7 +7,7 @@ module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 
-	homebridge.registerAccessory('homebridge-gpio-electic-rim-lock', 'Tiro', GPIOLockAccessory);	
+	homebridge.registerAccessory('homebridge-gpio-lock', 'GPIO-Lock', GPIOLockAccessory);	
 }
 
 function getSerial(){
@@ -39,7 +39,7 @@ function GPIOLockAccessory(log, config) {
 	if (this.autoLock && this.autoLockDelay % 1 == 0) {
 		this.log("autolooking enabled after %s milliseconds",this.autoLockDelay);
 	} 
-	this.log("Tiro GPIO version: " + this.version);
+	this.log("STH GPIO version: " + this.version);
 	this.log("Switch pin: " + this.pin);
 
 		//TODO: adapt Informationservice
@@ -106,14 +106,14 @@ GPIOLockAccessory.prototype = {
 	},
 
 	setLocked: function() {
-		this.log("locking... ") 
+		this.log("locking... " + this.name) 
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
 		this.currentLockState = Characteristic.LockTargetState.SECURED;
 		this.writePin(0);
 	},
 
 	setUnLocked: function() {
-		this.log("unlocking... ")
+		this.log("unlocking... " + this.name)
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.UNSECURED);
 		this.currentLockState = Characteristic.LockTargetState.UNSECURED;
 		this.writePin(1);
@@ -122,7 +122,7 @@ GPIOLockAccessory.prototype = {
 	autoLockFunction: function () {
 		this.log('Waiting %s seconds for autolock', this.autoLockDelay)
 		setTimeout(() => {
-			this.log('Autolocking...');
+			this.log('Autolocking...' + this.name);
 			this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
 			this.setLocked();
 		}, this.autoLockDelay)
@@ -135,6 +135,6 @@ GPIOLockAccessory.prototype = {
 		this.lockMechanismService.updateCharacteristic(Characteristic.LockCurrentState,
 			val == 0 ?
 			Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED);
-		this.log(val == 0 ? "locked" : "unlocked") ;
+		this.log((val == 0 ? "locked " : "unlocked ") + this.name) ;
 	}
 }
