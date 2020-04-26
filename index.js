@@ -41,11 +41,8 @@ function ElecticRimLockAccessory(log, config) {
 	this.log("Tiro GPIO version: " + this.version);
 	this.log("Switch pin: " + this.pin);
 	this.log("Active time: " + this.duration + " ms");
-}
 
-ElecticRimLockAccessory.prototype = {
-  
-	getServices: function() {	
+
 
 		//TODO: adapt Informationservice
 		let informationService = new Service.AccessoryInformation();
@@ -66,18 +63,19 @@ ElecticRimLockAccessory.prototype = {
     				.on('get', this.getLockTargetState.bind(this))
     				.on('set', this.setLockTargetState.bind(this));
 
-	this.lockMechanismService = lockMechanismService
-	this.informationService = informationService
-	
-		this.lockMechanismService
+	this.lockMechanismService
 			updateCharacteristic(Characteristic.LockCurrentState, 
 			Characteristic.LockTargetState.SECURED);
 
-		this.lockMechanismService.
+	this.lockMechanismService.
 			updateCharacteristic(Characteristic.LockTargetState, 
 			Characteristic.LockTargetState.SECURED);
+}
 
-		return [informationService, lockMechanismService];
+ElecticRimLockAccessory.prototype = {
+  
+	getServices: function() {	
+		return [this.informationService, this.lockMechanismService];
 	},
 
 	getLockCurrentState: function(callback) {
