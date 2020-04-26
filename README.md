@@ -17,7 +17,8 @@ npm i rpio
 
 Install this plugin using: 
 ```
-npm install homebridge-gpio-electic-rim-lock
+git clone ...
+npm install ./homebridge-gpio-electic-rim-lock
 ```
 
 
