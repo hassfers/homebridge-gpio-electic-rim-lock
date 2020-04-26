@@ -1,6 +1,7 @@
 "use strict";
 var Service, Characteristic;
-var rpio = require('rpio');
+// var rpio = require('rpio');
+
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
@@ -18,44 +19,63 @@ function getSerial(){
 
 
 function ElecticRimLockAccessory(log, config) {
-	this.log = log;
-	this.name = config['name'];
-	this.pin = config['pin'];
-	// this.duration = config['duration'];
 	this.version = require('./package.json').version;
-	this.currentLockState = 1;
-	this.targetLockState = 1;
+	this.log = log;
+
+	this.name = config['name'];
+	
+	//GPIO Pin at RPI Header 
+	this.pin = config['pin'];
+
+	//Autolock 
+	this.autoLock = config.autoLock || false
+	this.autoLockDelay = config.autoLockDelay || 10
+
+	//lockstate Variables
+	this.currentLockState = Characteristic.LockCurrentState.SECURED;
+	this.targetLockState = Characteristic.LockTargetState.SECURED;
+
 
 	if (!this.pin) throw new Error("You must provide a config value for pin.");
 	if (this.duration == null || this.duration % 1 != 0) this.duration = 3000;
 	this.log("Tiro GPIO version: " + this.version);
 	this.log("Switch pin: " + this.pin);
 	this.log("Active time: " + this.duration + " ms");
+
+	//Instatiate the services
+	let informationService = new Service.AccessoryInformation();
+	let lockMechanismService = new Service.LockMechanism(this.name);
 }
 
 ElecticRimLockAccessory.prototype = {
   
 	getServices: function() {	
-		let informationService = new Service.AccessoryInformation();
-		informationService
-    		.setCharacteristic(Characteristic.Manufacturer, "Roberto Montanari")
-			.setCharacteristic(Characteristic.Model, "Tiro GPIO")
+
+		//TODO: adapt Informationservice
+	
+		this.informationService
+    		.setCharacteristic(Characteristic.Manufacturer, "sth")
+			.setCharacteristic(Characteristic.Model, "GPIO Lock")
 			.setCharacteristic(Characteristic.SerialNumber, getSerial() + this.pin)
 			.setCharacteristic(Characteristic.FirmwareRevision, this.version);
 
-		let lockMechanismService = new Service.LockMechanism(this.name);
-		lockMechanismService
+		// LockMechanism
+		this.lockMechanismService
     			.getCharacteristic(Characteristic.LockCurrentState)
-    				.on('get', this.getLockCurrentState.bind(this));		
-		lockMechanismService
+					.on('get', this.getLockCurrentState.bind(this));	
+						
+		this.lockMechanismService
     			.getCharacteristic(Characteristic.LockTargetState)
     				.on('get', this.getLockTargetState.bind(this))
     				.on('set', this.setLockTargetState.bind(this));
 
-		this.informationService = informationService;
-		this.lockMechanismService = lockMechanismService;
+		this.lockMechanismService
+			updateCharacteristic(Characteristic.LockCurrentState, 
+			Characteristic.LockTargetState.SECURED);
 
-		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
+		this.lockMechanismService.
+			updateCharacteristic(Characteristic.LockTargetState, 
+			Characteristic.LockTargetState.SECURED);
 
 		return [informationService, lockMechanismService];
 	},
@@ -73,23 +93,23 @@ ElecticRimLockAccessory.prototype = {
 	
 	setLockTargetState: function(state, callback) {
 		this.log("getLockTargetState" + this.currentLockState + state);
-		if ( state == this.currentLockState) {
-			this.log("early return")
-			return("was da los")
-		}
+		// if ( state == this.currentLockState) {
+		// 	this.log("early return")
+		// 	return("was da los")
+		// }
 		switch (state) {
-			case 0:
-				this.log("state 0")
+			case Characteristic.LockTargetState.SECURED:
+				this.log("set to Characteristic.LockTargetState.SECURED");
 				this.setLocked();
-				if (this.duration){
-					this.autoLockFunction();
-				}
-				this.currentLockState = state;
+				// if (this.duration){
+				// 	this.autoLockFunction();
+				// }
+				this.targetLockState = state;
 				callback(null);
-			case 1:
-				this.log("state 1")
+			case Characteristic.LockCurrentState.UNSECURED:
+				this.log("set to Characteristic.LockTargetState.UNSECURED");
 				this.setUnLocked();
-				this.currentLockState = state;
+				this.targetLockState = state;
 				callback(null)
 			default:
 				this.log("default")
@@ -118,13 +138,15 @@ ElecticRimLockAccessory.prototype = {
 
 	setLocked: function() {
 		this.log("lock ") + this.name;
-		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 1)
+		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, 
+		Characteristic.LockTargetState.SECURED);
 		this.writePin(0);
 	},
 
 	setUnLocked: function() {
 		this.log("unlock ") + this.name;
-		this.lockMechanismService.setCharacteristic(Characteristic.LockTargetState, 0)
+		this.lockMechanismService.updateCharacteristic(Characteristic.LockTargetState, 
+			Characteristic.LockTargetState.UNSECURED);
 		this.writePin(1);
 	},
 
@@ -139,7 +161,10 @@ ElecticRimLockAccessory.prototype = {
 
 	writePin: function(val) {	
 		this.log("Turning " + (val == 0 ? "off" : "on") + " pin " + this.pin);
-		rpio.open(this.pin, rpio.OUTPUT);
-		rpio.write(this.pin, val);
+		this.lockMechanismService.updateCharacteristic(Characteristic.currentLockState, 
+			val == Characteristic.LockTargetState.SECURED ? 
+			Characteristic.LockTargetState.SECURED : Characteristic.LockTargetState.UNSECURED);
+		// rpio.open(this.pin, rpio.OUTPUT);
+		// rpio.write(this.pin, val);
 	}
 }
