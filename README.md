@@ -37,12 +37,13 @@ Configuration sample:
     },
 
     "accessories": [
-        {
-                "accessory": "Tiro",
-                "name": "Door",
-                "pin": 12,
-                "duration": 500
-        }
+     {
+               "accessory": "GPIO-Lock",
+               "name": "Door",
+               "pin": 12,
+               "autoLock": true,
+               "autoLockDelay": 2000
+          },
     ],
 
     "platforms": []
@@ -54,4 +55,5 @@ Fields:
 
 * name - Can be anything (required).
 * pin - The physical GPIO pin number that controls the relay (required).
-* duratin - Number of milliseconds to trigger the relay. Defaults to 1000 millseconds (1 second) if not specified.
+* autoLock - enable autolook
+* autoLockDelay - Number of milliseconds to trigger the relay. Defaults to 3000 millseconds (3 seconds) if not specified.
