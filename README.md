@@ -29,14 +29,6 @@ You will need to add the following accessory configuration to the Homebridge [co
 Configuration sample:
 
 ```JSON
-{
-    "bridge": {
-        "name": "Raspberry Pi 2",
-        "username": "CC:22:3D:E3:CE:32",
-        "port": 51826,
-        "pin": "031-45-154"
-    },
-
     "accessories": [
      {
                "accessory": "GPIO-Lock",
@@ -44,12 +36,8 @@ Configuration sample:
                "pin": 12,
                "autoLock": true,
                "autoLockDelay": 2000
-          },
-    ],
-
-    "platforms": []
-}
-
+          }
+    ]
 ```
 
 Fields: 
