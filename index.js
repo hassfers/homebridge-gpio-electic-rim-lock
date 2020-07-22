@@ -13,7 +13,7 @@ module.exports = function(homebridge) {
 function getSerial(){
 	var fs = require('fs');
 	var content = fs.readFileSync('/proc/cpuinfo', 'utf8').split("\n");	
-	var serial = content[content.length-2].split(":");
+	var serial = content[content.length-3].split(":");
 	return serial[1].slice(9);
 }
 
