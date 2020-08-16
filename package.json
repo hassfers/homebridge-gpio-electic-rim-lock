@@ -27,5 +27,6 @@
   },
   "dependencies": {
     "rpio": ">=0.9.12"
-  }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
